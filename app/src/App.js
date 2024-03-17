@@ -1,11 +1,12 @@
-import logo from "./logo.svg";
 import "./App.scss";
 import React, { useRef, useEffect, useState } from "react";
 import Container from "react-bootstrap/Container";
+import UploadItem from "./components/UploadItem";
 
 function App() {
   let input_ref = useRef(null);
   let button_ref = useRef(null);
+  let uploads_ref = useRef(null);
   let [files, setFiles] = useState([]);
 
   useEffect(() => {
@@ -87,10 +88,20 @@ function App() {
     };
   }, [button_ref, files]);
 
+  let onClose = (id) => {
+    console.debug(`Creating close handler for file upload ${id}`);
+    return () => {
+      console.log(`Closing ${id}`);
+    };
+  };
+
   return (
     <Container>
       <h1>Eclipse File Upload</h1>
       <p>Node ID: ET1003</p>
+      <div ref={uploads_ref}>
+        <UploadItem onClose={onClose(1)} />
+      </div>
       <div class="mb-3">
         <label for="formFileMultiple" className="form-label">
           Files
@@ -104,7 +115,10 @@ function App() {
         />
       </div>
       <div class="mb-3">
-        <button class="btn btn-primary" ref={button_ref}>
+        <button class="btn btn-lg btn-outline-secondary m-1" ref={button_ref}>
+          Add file
+        </button>
+        <button class="btn btn-lg btn-primary" ref={button_ref}>
           Upload
         </button>
       </div>
