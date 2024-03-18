@@ -58,7 +58,7 @@ function App() {
         });
 
         let response = await fetch(
-          "http://localhost:8080/api/upload?" +
+          "/api/upload?" +
             new URLSearchParams({
               key: passwordInputRef.current.value,
               user: callsignInputRef.current.value,
