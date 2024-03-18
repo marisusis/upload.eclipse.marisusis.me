@@ -1,48 +1,15 @@
 import "./App.scss";
 import React, { useRef, useReducer, useState, useEffect } from "react";
 import Container from "react-bootstrap/Container";
-import UploadItem from "./components/UploadItem";
-import ProgressBar from "react-bootstrap/ProgressBar";
 import UploadItemList from "./components/UploadItemList";
-
-function itemsReducer(items, action) {
-  switch (action.type) {
-    case "add": {
-      return [
-        ...items,
-        {
-          id: items.length > 0 ? items[items.length - 1].id + 1 : 0,
-          file: null,
-          progress: {
-            loaded: 0,
-            total: 0,
-          },
-          state: "idle",
-        },
-      ];
-    }
-    case "remove": {
-      return items.filter((item) => item.id !== action.id);
-    }
-    case "update": {
-      return items.map((item) => {
-        if (item.id === action.item.id) {
-          return action.item;
-        }
-        return item;
-      });
-    }
-    default: {
-      console.error("Unknown action", action);
-      return items;
-    }
-  }
-}
+import itemsReducer from "./itemsReducer";
 
 function App() {
   let callsignInputRef = useRef(null);
   let passwordInputRef = useRef(null);
   let [uploading, setUploading] = useState(false);
+  let [currentUpload, setCurrentUpload] = useState(null);
+  const [items, dispatch] = useReducer(itemsReducer, []);
 
   const uploadItems = async (items) => {
     for (let item of items) {
@@ -51,6 +18,8 @@ function App() {
           ...item,
           state: "uploading",
         };
+
+        setCurrentUpload(item.file.name);
 
         dispatch({
           type: "update",
@@ -114,7 +83,6 @@ function App() {
           });
         }, 5000);
       } catch (e) {
-        console.error("Error uploading", e);
         dispatch({
           type: "update",
           item: {
@@ -126,15 +94,6 @@ function App() {
       }
     }
   };
-
-  const [items, dispatch] = useReducer(itemsReducer, [
-    {
-      state: "idle",
-      id: 0,
-      file: null,
-      progress: {},
-    },
-  ]);
 
   const onUpload = () => {
     if (uploading) {
@@ -162,8 +121,12 @@ function App() {
     setUploading(true);
   };
 
-  const handleAddItem = () => {
-    dispatch({ type: "add" });
+  const handleAddItem = (file) => {
+    if (file) {
+      dispatch({ type: "add", file: file });
+    } else {
+      dispatch({ type: "add" });
+    }
   };
 
   const handleRemoveItem = (id) => {
@@ -178,24 +141,14 @@ function App() {
   if (uploading) {
     uploadContent = (
       <>
-        <p>Uploading...</p>
-        {/* <ProgressBar
-          striped
-          variant="primary"
-          animated
-          now={uploadProgress}
-          style={{
-            height: "40px",
-          }}
-          label={`Uploading...`}
-        ></ProgressBar> */}
+        <p>Uploading {currentUpload.substr(0, 50)}...</p>
       </>
     );
   } else {
     uploadContent = (
-      <div class="d-flex justify-content-end formControl mb-1">
+      <div className="d-flex justify-content-end formControl mb-1">
         <button
-          class="btn center btn-lg btn-primary"
+          className="btn center btn-lg btn-primary"
           style={{ width: "100px" }}
           onClick={onUpload}
         >
@@ -210,53 +163,81 @@ function App() {
       style={{
         maxWidth: "800px",
       }}
+      onDrop={(ev) => {
+        ev.preventDefault();
+        if (ev.dataTransfer.items) {
+          // Use DataTransferItemList interface to access the file(s)
+          [...ev.dataTransfer.items].forEach((item, i) => {
+            // If dropped items aren't files, reject them
+            if (item.kind === "file") {
+              const file = item.getAsFile();
+              dispatch({ type: "add", file: file });
+            }
+          });
+        } else {
+          // Use DataTransfer interface to access the file(s)
+          [...ev.dataTransfer.files].forEach((file, i) => {
+            dispatch({ type: "add", file: file });
+          });
+        }
+      }}
+      onDragOver={(e) => {
+        e.preventDefault();
+      }}
     >
       <h1
-        className="card-header mt-5"
+        className="card-header mt-3"
         style={{
           textAlign: "center",
         }}
       >
         Eclipse File Upload
       </h1>
-      <div className="card mt-5">
-        <div class="card-body">
-          <h5 class="card-title">Welcome to the eclipse file uploader!</h5>
-          <p class="card-text">
+      <div className="card mt-3">
+        <div className="card-body">
+          <h5 className="card-title">Welcome to the eclipse file uploader!</h5>
+          <p className="card-text">
             First enter your callsign, then select the files you want to upload.
-            To add additional files, click the{" "}
-            <span class="text-secondary">"Add file"</span> button. When you're
-            ready, click the <span class="text-primary">"Upload"</span> button
-            to upload your files. If you added a field by mistake, don't worry.
-            If no file is selected, the field will be ignored.
+            To add additional files, click the
+            <span className="text-secondary">"Add file"</span> button. When
+            you're ready, click the{" "}
+            <span className="text-primary">"Upload"</span> button to upload your
+            files. If you added a field by mistake, don't worry. If no file is
+            selected, the field will be ignored.
             <b> Please make sure to name your files in a descriptive manner.</b>
           </p>
           <div className="gx-5 container mb-3">
-            <div className="card p-3">
+            <div className="p-3">
               <div className="mb-3">
-                <label for="exampleFormControlInput1" class="form-label">
+                <label
+                  htmlFor="exampleFormControlInput1"
+                  className="form-label"
+                >
                   Password
                 </label>
                 <input
                   type="email"
-                  class="form-control"
+                  className="form-control"
                   id="exampleFormControlInput1"
                   ref={passwordInputRef}
                 />
               </div>
               <div className="mb-3">
-                <label for="exampleFormControlInput1" class="form-label">
+                <label
+                  htmlFor="exampleFormControlInput1"
+                  className="form-label"
+                >
                   Callsign or Name
                 </label>
                 <input
                   type="email"
-                  class="form-control"
+                  className="form-control"
                   id="exampleFormControlInput1"
                   placeholder="e.g. ABC123"
                   ref={callsignInputRef}
                 />
               </div>
-              <div class="mb-3">
+              <div className="mb-3">
                 <UploadItemList
                   items={items}
                   onRemoveItem={handleRemoveItem}
@@ -268,7 +249,7 @@ function App() {
               {uploadContent}
             </div>
           </div>
-          <p class="fs-6">
+          <p className="fs-6">
             <em>
               Made by <a href="https://github.com/marisusis">@marisusis</a> for
               the total solar eclipse on April 8, 2024.
