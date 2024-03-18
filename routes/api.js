@@ -37,8 +37,10 @@ export default function (fastify, opts, done) {
       };
     }
 
+    let subfolder = request.query.user ? request.query.user : "anonymous";
+
     const [url] = await bucket
-      .file(path.join("TEST", request.query.file))
+      .file(path.join("UPLOAD", subfolder, request.query.file))
       .getSignedUrl({
         action: "write",
         version: "v4",
