@@ -30,7 +30,7 @@ function App() {
           "/api/upload?" +
             new URLSearchParams({
               key: passwordInputRef.current.value,
-              user: callsignInputRef.current.value,
+              name: callsignInputRef.current.value.replace(" ", "_"),
               file: item.file.name,
             }),
         );
@@ -197,14 +197,51 @@ function App() {
         <div className="card-body">
           <h5 className="card-title">Welcome to the eclipse file uploader!</h5>
           <p className="card-text">
-            First enter your callsign, then select the files you want to upload.
-            To add additional files, click the
-            <span className="text-secondary">"Add file"</span> button. When
-            you're ready, click the{" "}
-            <span className="text-primary">"Upload"</span> button to upload your
-            files. If you added a field by mistake, don't worry. If no file is
-            selected, the field will be ignored.
-            <b> Please make sure to name your files in a descriptive manner.</b>
+            <p className="card-text">
+              First, enter your callsign (preferred) or full name if you do not
+              have a callsign. Then, select the files you want to upload. To add
+              additional files, click the{" "}
+              <span className="text-secondary">"Add file"</span> button. When
+              all of your files are added, click the{" "}
+              <span className="text-primary">"Upload"</span> button to upload
+              your files.
+              <br />
+              <br />
+              Please make sure to name your files using the requested
+              convention:
+              <br />
+              <b>
+                [callsign or name]_[frequency recorded in KHz]_[day of UTC month
+                when the wav file starts]_[day of UTC month when the wav file
+                ends].wav
+              </b>
+              <br />
+              So, for a recording of the 7850 KHz CHU frequency at W8EDU that
+              lasts from April 1 to April 15, you would name the file{" "}
+              <b>w8edu_7850_1_15.wav</b>
+              <br />
+              <br />
+              During or after your file upload,{" "}
+              <a
+                href="https://forms.gle/qwEaf722nB7JN7qS9"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                please fill out this survey
+              </a>{" "}
+              to submit critical information about your station setup.{" "}
+              <b>
+                Your data submissions will not be used or credited unless you
+                fill out the survey.
+              </b>
+              <br />
+              <br />
+              Please reach out to{" "}
+              <a href="mailto:eclipse-research@case.edu">
+                eclipse-research@case.edu
+              </a>{" "}
+              if you have any questions or concerns.
+            </p>
           </p>
           <div className="gx-5 container mb-3">
             <div className="p-3">

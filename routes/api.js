@@ -2,6 +2,8 @@ import { Storage } from "@google-cloud/storage";
 import path from "path";
 import ky from "ky";
 
+const password = process.env.PASSWORD ? process.env.PASSWORD : "yoy";
+
 export default function (fastify, opts, done) {
   const storage = new Storage({
     keyFilename: "gcloud.json",
@@ -23,7 +25,7 @@ export default function (fastify, opts, done) {
   const bucket = storage.bucket("test.eclipse.marisusis.me");
 
   fastify.get("/upload", async function handler(request, reply) {
-    if (request.query.key != "yoy") {
+    if (request.query.key != password) {
       reply.statusCode = 401;
       return {
         error: "Unauthorized",
@@ -40,7 +42,8 @@ export default function (fastify, opts, done) {
     let subfolder = request.query.user ? request.query.user : "anonymous";
 
     const [url] = await bucket
-      .file(path.join("UPLOAD", subfolder, request.query.file))
+      // .file(path.join("UPLOAD", subfolder, request.query.file))
+      .file(path.join(subfolder, request.query.file))
       .getSignedUrl({
         action: "write",
         version: "v4",
