@@ -30,7 +30,7 @@ function App() {
           "/api/upload?" +
             new URLSearchParams({
               key: passwordInputRef.current.value,
-              name: callsignInputRef.current.value.replace(" ", "_"),
+              identifier: callsignInputRef.current.value.replace(" ", "_"),
               file: item.file.name,
             }),
         );

@@ -39,7 +39,7 @@ export default function (fastify, opts, done) {
       };
     }
 
-    let subfolder = request.query.user ? request.query.user : "anonymous";
+    let subfolder = request.query.identifier ? request.query.identifier : "anonymous";
 
     const [url] = await bucket
       // .file(path.join("UPLOAD", subfolder, request.query.file))
