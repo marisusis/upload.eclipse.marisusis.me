@@ -22,7 +22,7 @@ export default function (fastify, opts, done) {
     };
   });
 
-  const bucket = storage.bucket("test.eclipse.marisusis.me");
+  const bucket = storage.bucket("upload.eclipse.marisusis.me");
 
   fastify.get("/upload", async function handler(request, reply) {
     if (request.query.key != password) {
