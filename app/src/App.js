@@ -253,7 +253,6 @@ function App() {
                   Password
                 </label>
                 <input
-                  type="email"
                   className="form-control"
                   id="exampleFormControlInput1"
                   ref={passwordInputRef}
@@ -267,7 +266,6 @@ function App() {
                   Callsign or Name
                 </label>
                 <input
-                  type="email"
                   className="form-control"
                   id="exampleFormControlInput1"
                   placeholder="e.g. ABC123"
