@@ -9,6 +9,7 @@ function App() {
   let passwordInputRef = useRef(null);
   let [uploading, setUploading] = useState(false);
   let [currentUpload, setCurrentUpload] = useState(null);
+  let [missingCallsign, setMissingCallsign] = useState(false);
   const [items, dispatch] = useReducer(itemsReducer, []);
 
   const uploadItems = async (items) => {
@@ -96,6 +97,11 @@ function App() {
   };
 
   const onUpload = () => {
+    if (callsignInputRef.current.value.length === 0) {
+      setMissingCallsign(true);
+      return;
+    }
+
     if (uploading) {
       return;
     }
@@ -157,6 +163,24 @@ function App() {
       </div>
     );
   }
+
+  useEffect(() => {
+    let input = callsignInputRef.current;
+
+    let listener = (e) => {
+      if (input.value.length > 0) {
+        setMissingCallsign(false);
+      } else {
+        setMissingCallsign(true);
+      }
+    };
+
+    input.addEventListener("keyup", listener);
+
+    return () => {
+      input.removeEventListener("keyup", listener);
+    };
+  }, [callsignInputRef]);
 
   return (
     <Container
@@ -258,13 +282,22 @@ function App() {
                   ref={passwordInputRef}
                 />
               </div>
-              <div className="mb-3">
+              <div
+                className={
+                  missingCallsign
+                    ? "mb-3 callsign-input invalid"
+                    : "mb-3 callsign-input"
+                }
+              >
                 <label
                   htmlFor="exampleFormControlInput1"
                   className="form-label"
                 >
                   Callsign or Name
                 </label>
+                <span style={{ display: "none" }}>
+                  Must provide callsign or name
+                </span>
                 <input
                   className="form-control"
                   id="exampleFormControlInput1"

@@ -36,6 +36,21 @@ body {
     color: #61dafb;
 }
 
+.callsign-input.invalid {
+    input {
+        border: 1px solid red;
+        position: relative;
+    }
+
+    span {
+        display: block !important;
+        color: red;
+        font-size: 12px;
+        padding-left: 4px;
+    }
+
+}
+
 @keyframes App-logo-spin {
     from {
         transform: rotate(0deg);
