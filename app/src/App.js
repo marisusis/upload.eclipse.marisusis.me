@@ -77,12 +77,12 @@ function App() {
           },
         });
 
-        setTimeout(() => {
-          dispatch({
-            type: "remove",
-            id: item.id,
-          });
-        }, 5000);
+        // setTimeout(() => {
+        //   dispatch({
+        //     type: "remove",
+        //     id: item.id,
+        //   });
+        // }, 5000);
       } catch (e) {
         dispatch({
           type: "update",
